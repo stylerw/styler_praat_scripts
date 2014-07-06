@@ -31,6 +31,10 @@ Each file has ReadMe information either as commenting at the start of the script
 
 These scripts were written on a Mac, for a Mac. You may need to change your paths from /Users/... to c:\\ or whatever silly things Windows makes you do.
 
+If you're just wanting to get started in scripting, start with [Demo Formant Script](https://github.com/stylerw/styler_praat_scripts/blob/master/demo_formant_script.praat).  It's well-commented, and designed to be easy to use and adapt for other purposes.
+
+The rest of the scripts are custom built for a variety of different purposes.  Enjoy!
+
 ## Where's the Nasality Script?
 
 Good question!  Right now, it's still being actively developed, as nasality is a capricious and terrible mistress.  If you'd like to try your luck with it, please contact Will and ask for the latest version.  
