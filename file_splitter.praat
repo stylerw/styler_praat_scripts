@@ -8,16 +8,16 @@
 #######################################################################
 
 form Chopping long sound files
-   comment Directory of sound files (ending with /): 
-        text directory /Users/stylerw/Desktop/
    comment Sound file extension:
         optionmenu file_type: 2
         option .aiff
         option .wav
 	comment How many seconds per chunk?
-		integer len 20
+		integer len 6000
 endform
 
+directory$ = chooseDirectory$ ("Choose the directory containing sound files to be split")
+directory$ = "'directory$'" + "/" 
 
 clearinfo
 Create Strings as file list... list 'directory$'*'file_type$'
