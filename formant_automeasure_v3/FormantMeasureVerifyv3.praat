@@ -68,8 +68,8 @@ directory$ = "'directory$'" + "/"
 
 #### Set up progress file to hold the names of files it's already done
 
-handfile$ = "'directory$'"+"formanthandmeasurelog.txt"
-resultfile$ = "'directory$'"+"formantlog.txt"
+handfile$ = "'directory$'"+"_formanthandmeasurelog.txt"
+resultfile$ = "'directory$'"+"_formantlog.txt"
 
 Create Strings as file list... list 'directory$'*'file_type$'
 number_files = Get number of strings
@@ -308,7 +308,7 @@ procedure Log_output
 			meastype$ = "verify"
 		endif
         # save result to text file	            
-        result_row$ = "'soundname$'" + tab$ + "'word_label$'" + tab$ + "'vowel_label$'" + tab$ + "'conff1'"  + tab$ + "'conff2'"+ tab$ + "'conff3'" + tab$ + "'rndduration'" + tab$ + "'point$'" + tab$ + "'vwlpct$'" + tab$ + "'meastype$'" + newline$
+        result_row$ = "'soundname$'" + tab$ + "'word_label$'" + tab$ + "'vowel_label$'" + tab$ + "'conff1'"  + tab$ + "'conff2'"+ tab$ + "'conff3'" + tab$ + "'rndduration'" + tab$ + "'point$'" + tab$ + "'vwlpct:2'" + tab$ + "'meastype$'" + newline$
         fileappend "'resultfile$'" 'result_row$'
 		# Write down whether if this was hand-measured
 		if skipstat = 1
