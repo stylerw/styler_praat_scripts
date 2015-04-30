@@ -1,5 +1,5 @@
 #######################################################################
-#  Formant Measurement Script, v.3.0.1
+#  Formant Measurement Script, v.3.1
 #######################################################################
 #  This script measures formant values at beginning, midpoint, and end
 #  for vowels marked in a TextGrid annotated sound.  It also allows the
@@ -24,7 +24,7 @@
 #           are logged (along with the other output information listed above).
 #
 #  
-#  Originally written by Rebecca Scarborough with bits of code borrowed from scripts by Bert Remijsen, Mietta Lennes, and Katherine Crosswhite 7/28/05.  Heavily revised and re-written by Will Styler, 2008-2014
+#  Originally written by Rebecca Scarborough with bits of code borrowed from scripts by Bert Remijsen, Mietta Lennes, and Katherine Crosswhite 7/28/05.  Heavily revised and re-written by Will Styler, 2008-2015
 #
 #  FormantMeasureVerifyv2.praat Modification by Will Styler, 2/14/08
 #
@@ -35,6 +35,7 @@
 #	The main difference here is the addition of an intelligent formant number selection, which works best for English data and female speakers.  Basically, if the labeled vowel is phonologically [+back] (it just works well like that), it searches with 5 formants, but otherwise, goes for four.  Also, pause forms have been implemented to enable inline formant data correction without another script, as well as to speed the process of annotation and correction when the word has clearly defined formants
 #
 #	Version 3.0.1: Added folder chooser dialog to script
+#	Version 3.1 (May 2015): Added ability to measure N points per vowel
 #
 #######################################################################
 
@@ -56,12 +57,10 @@ form Calculate F1, F2 & duration for labeled vowels in files
         choice playit 2
         button yes
         button no
-    comment Midpoint Only?
-        choice mido 1
-        button yes
-        button no
-   comment How many formants (in 5000hz)?
+   	 comment How many formants (in 5000hz)?
         positive numformants 5
+    comment How many measures per vowel?
+         positive tpnum 12
 endform
 
 directory$ = chooseDirectory$ ("Choose the directory containing sound files and textgrids")
@@ -76,7 +75,7 @@ Create Strings as file list... list 'directory$'*'file_type$'
 number_files = Get number of strings
 
 # Set up log file:
-header_row$ = "Filename" + tab$ + "word" + tab$ + "vowel" + tab$ + "F1" + tab$ + "F2"  + tab$ + "F3"+ tab$ + "Duration" + tab$ + "Timepoint" + tab$ + "MeasType" + newline$
+header_row$ = "Filename" + tab$ + "word" + tab$ + "vowel" + tab$ + "F1" + tab$ + "F2"  + tab$ + "F3"+ tab$ + "Duration" + tab$ + "Timepoint" + tab$ + "VowelPercent" + tab$ + "MeasType" + newline$
 	fileappend "'resultfile$'" 'header_row$'
 
 # Go through all the sound files, one by one:
@@ -102,10 +101,12 @@ for j from 1 to number_files
 	    word_label$ = Get label of interval... 'word' 2
 	    #checks if interval has a labeled vowel
 	    if vowel_label$ <> ""
-			start = Get starting point... 'vowel' 'k'
-			end = Get end point... 'vowel' 'k'
-			midpoint = start + ((end - start) / 2)
-			duration = (end - start) * 1000
+			vowel_start = Get starting point... 'vowel' 'k'
+			vowel_end = Get end point... 'vowel' 'k'
+			midpoint = vowel_start + ((vowel_end - vowel_start) / 2)
+			duration = (vowel_end - vowel_start) * 1000
+			durationms = (vowel_end - vowel_start)
+			
 			finishing_time = Get finishing time
 			#save the word that the vowel is contained in to a temporary soundfile for anaylsis
 			word_start = Get starting point... 'word' 2
@@ -123,52 +124,40 @@ for j from 1 to number_files
 			else
 				To Formant (burg)... 0.0 'finalformantnumber' 5000 0.025 50
 			endif
-
+			size = durationms / (tpnum-1)
+			skipstat = 1
 			# cycle through measurement timepoints (start, mid, end)
-			if mido = 2
-				# start
-				point$ = "start"
-				timepoint = 'start'
-				technical_timepoint = start + 0.015
+			for point from 1 to tpnum
+				if point = 1
+					timepoint = 'vowel_start'
+				elsif point = tpnum
+					timepoint = 'vowel_end'
+				else
+					timepoint = vowel_start + (size * (point-1))
+				endif		
+				# Save the timepoint label for output
+				tpname = 'point'
+				vwlpct = ((timepoint-vowel_start)/durationms)*100
+				# If you want start-mid-end, three timepoint measures, we have to tweak a bit
+				if tpnum = 3
+					# Oh Praat, why can't I nest if statements without defining some junk variable?
+					junkvariable = 0
+					if point = 2
+						timepoint = 'midpoint'
+					elsif point = 3
+						timepoint = 'vowel_end'
+					endif
+				endif
+				# If you just want one point, you want the midpoint
+				if tpnum = 1
+					timepoint = 'midpoint'
+				endif
+				point$ = "'point'"
+				technical_timepoint = timepoint + 0.015
 				call Calculate_formants
 				call Display_spectrogram
 				call Display_spectrum_and_LPC
 				#### Note that for this modified script, Temp_Output must be called before Verify_, and Temp_input must come before Log_output
-				call Verify_formants
-				call Log_output
-			endif
-			
-			if mido = 1
-				skipstat = 3
-			endif
-
-			# midpoint
-			point$ = "midpoint"
-			timepoint = 'midpoint'
-			technical_timepoint = timepoint
-			call Calculate_formants
-			call Display_spectrogram
-			call Display_spectrum_and_LPC
-			if skipstat = 3
-				call Verify_formants
-			elsif skipstat = 1
-				call Verify_formants
-			endif
-			if skipstat = 2
-				conff1 = f1
-				conff2 = f2
-				conff3 = f3
-			endif
-			call Log_output
-
-			if mido = 2
-				#end
-				point$ = "end"
-				timepoint = 'end'
-				technical_timepoint = end - 0.015
-				call Calculate_formants
-				call Display_spectrogram
-				call Display_spectrum_and_LPC
 				if skipstat = 3
 					call Verify_formants
 				elsif skipstat = 1
@@ -180,7 +169,8 @@ for j from 1 to number_files
 					conff3 = f3
 				endif
 				call Log_output
-			endif
+			endfor
+			
 			# get rid of temporary objects
 			select Sound 'soundname$'_word
 			plus Formant 'soundname$'_word
@@ -220,11 +210,11 @@ procedure Display_spectrogram
         # display the formant tracks overlaid on spectrogram.
         Erase all
         Font size... 14
-        display_from = 'start' - 0.15
+        display_from = 'vowel_start' - 0.15
         if ('display_from' < 0)
                 display_from = 0
         endif
-        display_until = 'end' + 0.15
+        display_until = 'vowel_end' + 0.15
         if ('display_until' > 'finishing_time')
                 display_until = 'finishing_time'
         endif
@@ -292,7 +282,6 @@ procedure Verify_formants
 
         # puts nothing at the bottom of the picture, just to raise picture to the top
         Text bottom... yes 
-	endif
 	beginPause ("If all measurements are valid, click Continue")
 		comment ("If not, make changes below")
 		comment ("F1 Frequency")
@@ -303,6 +292,9 @@ procedure Verify_formants
 			real ("conff3", 'rndf3')
 		comment ("Automeasure until next word, or hand verify next timepoint?")
 		skipstat = endPause ("Hand Next", "Next Word", "Next Point", 3)
+       	editor Sound 'soundname$'_word
+			Close
+		endeditor
 endproc
 
 ### Now, the modified Logging procedure logs the final result, whether they were acceptable automatic values or corrected F1/F2 values.
@@ -316,7 +308,7 @@ procedure Log_output
 			meastype$ = "verify"
 		endif
         # save result to text file	            
-        result_row$ = "'soundname$'" + tab$ + "'word_label$'" + tab$ + "'vowel_label$'" + tab$ + "'conff1'"  + tab$ + "'conff2'"+ tab$ + "'conff3'" + tab$ + "'rndduration'" + tab$ + "'point$'" + tab$ + "'meastype$'" + newline$
+        result_row$ = "'soundname$'" + tab$ + "'word_label$'" + tab$ + "'vowel_label$'" + tab$ + "'conff1'"  + tab$ + "'conff2'"+ tab$ + "'conff3'" + tab$ + "'rndduration'" + tab$ + "'point$'" + tab$ + "'vwlpct$'" + tab$ + "'meastype$'" + newline$
         fileappend "'resultfile$'" 'result_row$'
 		# Write down whether if this was hand-measured
 		if skipstat = 1

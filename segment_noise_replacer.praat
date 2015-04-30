@@ -46,8 +46,12 @@ for j from 1 to number_files
 					v_startreal = Get starting point... 1 'kitty'
 					v_endreal = Get end point... 1 'kitty'
 					v_dur = v_endreal - v_startreal
-					v_start = v_startreal + (0.05 * v_dur)
-					v_end = v_endreal - (0.05 * v_dur)
+					# adjust by 8% of the vowel's duration
+					#v_start = v_startreal + (0.08 * v_dur)
+					#v_end = v_endreal - (0.08 * v_dur)
+					# Adjust by 12 ms
+					v_start = v_startreal + 0.02
+					v_end = v_endreal - 0.02
 					labeledv = 1
 				endif
 			endif
@@ -56,7 +60,7 @@ for j from 1 to number_files
 		do ("Extract part...", 'v_start', 'v_end', "rectangular", 1,"no")
 		soundamp = do ("Get intensity (dB)")
 		do ("Scale intensity...", 70)
-		Write to WAV file... 'directory$'_noised/'soundname$'_vowelnoise.wav
+		#Write to WAV file... 'directory$'_noised/'soundname$'_vowelnoise.wav
 		select Sound 'soundname$'
 		intstart = 0
 		intend = v_start
@@ -70,7 +74,7 @@ for j from 1 to number_files
 		select Sound noise
 		plus Sound 'soundname$'_part
 		do ("Concatenate")
-		Write to WAV file... 'directory$'_noised/'soundname$'_onsetnoise.wav
+		Write to WAV file... 'directory$'_noised/'soundname$'_o.wav
 		select TextGrid 'soundname$'
 		intstart = v_start
 		intend = v_end
@@ -95,7 +99,7 @@ for j from 1 to number_files
 		select Sound 'soundname$'_part
 		plus Sound noise
 		do ("Concatenate")
-		Write to WAV file... 'directory$'_noised/'soundname$'_codanoise.wav
+		Write to WAV file... 'directory$'_noised/'soundname$'_c.wav
 		select all
 		minus Strings list
 		Remove
