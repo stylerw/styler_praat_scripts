@@ -97,14 +97,14 @@ If you ask for three measurements per vowel, it'll give you measures at start, m
 
 Your data will need to be in soundfile (.aiff or .wav) and matching textgrid format, and stored in a folder someplace.  The textgrids will have to have a word and vowel tier, and the vowel will _have_ to be labeled (as the script will measure all labeled intervals).  So, the contents of your folder should look like:
 
-joey_2_m_bame.TextGrid
-joey_2_m_bame.wav
-joey_2_m_band.TextGrid
-joey_2_m_band.wav
-joey_2_m_bang.TextGrid
-joey_2_m_bang.wav
-joey_2_m_bench.TextGrid
-joey_2_m_bench.wav
+* joey_2_m_bame.TextGrid
+* joey_2_m_bame.wav
+* joey_2_m_band.TextGrid
+* joey_2_m_band.wav
+* joey_2_m_bang.TextGrid
+* joey_2_m_bang.wav
+* joey_2_m_bench.TextGrid
+* joey_2_m_bench.wav
 ...(and so forth)
 
 Right now, this script is not capable of running on a single item, say, in a Praat window, so just save it with a textgrid in a folder, and you're golden.
@@ -138,46 +138,47 @@ Simply put, for each timepoint, the script will:
 
 # Logfile Description
 
-filename - The filename from which this measurement came
-word - The label in the "word" tier
-vowel - The label in the "vowel" tier
-freq_f1 - The frequency of the peak where A1 was measured (Hz)
-amp_f1- The Amplitude of the highest peak under F1 (dB)
-width_f1 - The bandwidth of F1 (Hz)
-freq_f2 - Where Praat found F2 for the vowel (not hand confirmed) (Hz)
-amp_f2 - The Amplitude of the highest peak under F2 (dB)
-width_f2 - The bandwidth of F2 (Hz)
-freq_f3 - Where Praat found F3 for the vowel (not hand confirmed) (Hz)
-amp_f3 - The Amplitude of the highest peak under F3 (dB)
-width_f3 - The bandwidth of F3 (Hz)
-freq_h1 - The frequency of the peak where H1 was measured (Hz)
-amp_h1 - The Amplitude of H1 (dB)
-freq_h2 - The frequency of the peak where H2 was measured (Hz)
-amp_h2 - The Amplitude of H2 (dB)
-amp_h3 - The Amplitude of H3 (dB)
-amp_p0 - The Amplitude of P0 (as measured using the highest of H1 or H2) (dB)
-freq_p0 - The frequency of the peak where H1 was measured (Hz)
-p0_id - Which harmonic was chosen as P0 (H1, or H2)
-p0prominence - The height of P0 relative to the surrounding two harmonics (See Styler 2015, Styler and Scarborough 2014 (ASA Poster))
-a1p0_h1 - A1-P0 calculated using H1
-a1p0_h2 - A1-P0 calculated using H2
-a1p0_h3 - A1-P0 calculated using H3
+* filename - The filename from which this measurement came
+* word - The label in the "word" tier
+* vowel - The label in the "vowel" tier
+* freq_f1 - The frequency of the peak where A1 was measured (Hz)
+* amp_f1- The Amplitude of the highest peak under F1 (dB)
+* width_f1 - The bandwidth of F1 (Hz)
+* freq_f2 - Where Praat found F2 for the vowel (not hand confirmed) (Hz)
+* amp_f2 - The Amplitude of the highest peak under F2 (dB)
+* width_f2 - The bandwidth of F2 (Hz)
+* freq_f3 - Where Praat found F3 for the vowel (not hand confirmed) (Hz)
+* amp_f3 - The Amplitude of the highest peak under F3 (dB)
+* width_f3 - The bandwidth of F3 (Hz)
+* freq_h1 - The frequency of the peak where H1 was measured (Hz)
+* amp_h1 - The Amplitude of H1 (dB)
+* freq_h2 - The frequency of the peak where H2 was measured (Hz)
+* amp_h2 - The Amplitude of H2 (dB)
+* amp_h3 - The Amplitude of H3 (dB)
+* amp_p0 - The Amplitude of P0 (as measured using the highest of H1 or H2) (dB)
+* freq_p0 - The frequency of the peak where H1 was measured (Hz)
+* p0_id - Which harmonic was chosen as P0 (H1, or H2)
+* p0prominence - The height of P0 relative to the surrounding two harmonics (See Styler 2015, Styler and Scarborough 2014 (ASA Poster))
+* a1p0_h1 - A1-P0 calculated using H1
+* a1p0_h2 - A1-P0 calculated using H2
+* a1p0_h3 - A1-P0 calculated using H3
 	* This is ONLY for speakers who have exceptionally low F0.  The script will never naturally give A1-P0 using H3 for the baseline 'a1p0', only H1 and H2.  Unless you're sure it applies for this speaker, do not use this value.
-a1p0 - A1-P0 calculated using whichever of the first harmonics was higher (H1 or H2), as recommended in Chen 1997.
-a1p0_compensated - Chen (1997) gives a method of adjusting A1-P0 based on formants and bandwidth.  This number is the result of that method, based on the HighPeak A1-P0.
-freq_p1 - The freqnency of the peak where P1 was measured (Hz)
+* a1p0 - A1-P0 calculated using whichever of the first harmonics was higher (H1 or H2), as recommended in Chen 1997.
+* a1p0_compensated - Chen (1997) gives a method of adjusting A1-P0 based on formants and bandwidth.  This number is the result of that method, based on the HighPeak A1-P0.
+* freq_p1 - The freqnency of the peak where P1 was measured (Hz)
 amp_p1 - The Amplitude of P1 (the highest peak near the value set in the script's form) (dB)
-a1p1 - A1-P1 calculated using the peak at P1Freq
-a1p1_Compensated - Chen (1995) gives a method of adjusting A1-P1 based on formants and bandwidth.  This number is the result of that method, based on the A1-P1 above
-a3p0 - The amplitude of F3 - the amplitude of P0.  Fundamentally, a measure of spectral tilt (See Styler 2015).
-vwl_amp_rms - The RMS amplitude of the vowel (Pascal)
-vwl_duration - The duration of the vowel (ms)
-timepoint - Which timepoint (by number) this measurement comes from
-point_time - The time of this measurement within the file
-point_vwlpct - The time of this measurement in terms of % duration of the vowel.
-attempted_fix - If the script tried to fix something, this lets you know.  An entry here doesn't mean there's a problem with the final data.
-status - Was this measurement done automatically (Auto) or hand-verified (Verify)
-errorflag - These all indicate problems with the measurement.  **Any measurement which shows something other than "none" listed here should be excluded from further use or analysis.**
+* a1p1 - A1-P1 calculated using the peak at P1Freq
+* a1p1_Compensated - Chen (1995) gives a method of adjusting A1-P1 based on formants and bandwidth.  This number is the result of that method, based on the A1-P1 above
+* a3p0 - The amplitude of F3 - the amplitude of P0.  Fundamentally, a measure of spectral tilt (See Styler 2015).
+* vwl_amp_rms - The RMS amplitude of the vowel (Pascal)
+* vwl_duration - The duration of the vowel (ms)
+* timepoint - Which timepoint (by number) this measurement comes from
+* point_time - The time of this measurement within the file
+* point_vwlpct - The time of this measurement in terms of % duration of the vowel.
+* attempted_fix - If the script tried to fix something, this lets you know.  An entry here doesn't mean there's a problem with the final data.
+* status - Was this measurement done automatically (Auto) or hand-verified (Verify)
+* errorflag - These all indicate problems with the measurement.
+	* **Any measurement which shows something other than "none" listed here should be excluded from further use or analysis.**
 	* LowF1 = If F1 is lower than the lowest acceptable value set in the script (the "hif1" settings), the point fails
 	* HighF1 = If F1 is higher than the highest acceptable value set in the script (the "lof1" settings), the point fails.
 	* LoPitch = The H1 detected was less than "crazylowh1" in the script (default is 80 Hz, but can be adjusted)
@@ -316,6 +317,8 @@ If you have any further questions, email will@savethevowels.org.  If not, have f
 * Version 5.8.1 (May 2015): **Initial Public Release!**.  Updated documentation to reflect the now-public nature of the script, and added discussion of the intricacies of vowel nasality.  No changes were made to the function or code of the script from 5.8.1.
 
 ## References
+
+M. Y. Chen. Acoustic Parameters of Nasalized Vowels in Hearing-Impaired and Normal-Hearing Speakers. *The Journal of the Acoustical Society of America*, 98(5):2443–2453, 1995.
 
 M. Y. Chen. Acoustic correlates of English and French nasalized vowels. *The Journal of the Acoustical Society of America*, 102(4):2350–2370, 1997.
 
