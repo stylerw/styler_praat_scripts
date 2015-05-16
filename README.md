@@ -37,5 +37,4 @@ The rest of the scripts are custom built for a variety of different purposes.  E
 
 ## Where's the Nasality Script?
 
-Good question!  Right now, it's still being actively developed, as nasality is a capricious and terrible mistress.  If you'd like to try your luck with it, please contact Will and ask for the latest version.  
-
+It's [right here](https://github.com/stylerw/styler_praat_scripts/tree/master/nasality_automeasure), but you're going to want to read the README file before you do *anything* with it.  Nasality's a dangerous beast!
