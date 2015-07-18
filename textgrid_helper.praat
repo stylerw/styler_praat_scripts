@@ -15,11 +15,11 @@ for ifile to number_files
 	select Strings list
 	sound$ = Get string... ifile
 	Read from file... 'directory$''sound$'
-	gridfile$ = "'directory$''sound$'.TextGrid"
+	soundname$ = selected$ ("Sound", 1)
+	gridfile$ = "'directory$''soundname$'.TextGrid"
 	if fileReadable (gridfile$)
 		junkvar = 1
 	else
-		soundname$ = selected$ ("Sound", 1)
 		selectObject: "Sound 'soundname$'"
 		Scale intensity: 70
 		To TextGrid: "vowel", ""
