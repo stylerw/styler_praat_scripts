@@ -17,22 +17,35 @@ for ifile to number_files
 	Read from file... 'directory$''sound$'
 	soundname$ = selected$ ("Sound", 1)
 	gridfile$ = "'directory$''soundname$'.TextGrid"
+	badfile$ = "'directory$''soundname$'.isBad"
 	if fileReadable (gridfile$)
-		junkvar = 1
+		selectObject: "Sound 'soundname$'"
+		Remove
+	elif fileReadable (badfile$)
+		selectObject: "Sound 'soundname$'"
+		Remove
 	else
 		selectObject: "Sound 'soundname$'"
-		Scale intensity: 70
 		To TextGrid: "vowel", ""
 		selectObject: "Sound 'soundname$'"
+		Filter (pass Hann band): 0, 5000, 100
+		Scale intensity: 70
+		
+		selectObject: "Sound 'soundname$'_band"
 		plusObject: "TextGrid 'soundname$'"
 		Edit
 		editor TextGrid 'soundname$'
-			pause When ready to move onto the next file, click Continue
-		# You'll need to manually close the window (or it won't close at all).  This is oddly more efficient.
+			beginPause ("If the sound file is fine, click OK.  If the target is missing or otherwise bad , click Bad File")
+				skipstat = endPause ("Bad file!", "OK", 2)
 		endeditor
 		selectObject: "TextGrid 'soundname$'"
-		Save as text file: "'directory$''soundname$'.TextGrid"
+		if skipstat <> 2
+			Save as text file: "'directory$''soundname$'.isBad"
+		else
+			Save as text file: "'directory$''soundname$'.TextGrid"
+		endif
 		selectObject: "Sound 'soundname$'"
+		plusObject: "Sound 'soundname$'_band"
 		plusObject: "TextGrid 'soundname$'"
 		Remove
 	endif
