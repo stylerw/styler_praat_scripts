@@ -176,18 +176,21 @@ procedure Individual_Pass
 				### This next line will break if there's more than one word per file, as it specifies the word is the 2nd interval on the word tier.
 				wordint = 2
 				# if there's a word label, extract it
-				if wordlab = 1
-					label newwordint
-					word_label$ = Get label of interval... 'wordtier' 'wordint'
-					if word_label$ = ""
-						wordint = wordint + 1
-						goto newwordint
+				if wordtier <> voweltier
+					if wordlab = 1
+						label newwordint
+						word_label$ = Get label of interval... 'wordtier' 'wordint'
+						if word_label$ = ""
+							wordint = wordint + 1
+							goto newwordint
+						endif
+					else
+					# If there's no word label, just use "None" for that column.
+						word_label$ = "None"
 					endif
 				else
-				# If there's no word label, just use "None" for that column.
 					word_label$ = "None"
 				endif
-				
 				
 				select TextGrid 'soundname$'
 				number_intervals = Get number of intervals... 'voweltier'
