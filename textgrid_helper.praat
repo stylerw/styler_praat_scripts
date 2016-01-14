@@ -11,6 +11,8 @@ file_type$ = ".wav"
 Create Strings as file list... list 'directory$'*'file_type$'
 number_files = Get number of strings
 
+label restart
+
 for ifile to number_files
 	select Strings list
 	sound$ = Get string... ifile
@@ -36,18 +38,31 @@ for ifile to number_files
 		Edit
 		editor TextGrid 'soundname$'
 			beginPause ("If the sound file is fine, click OK.  If the target is missing or otherwise bad , click Bad File")
-				skipstat = endPause ("Bad file!", "OK", 2)
+				skipstat = endPause ("Re
+				cgdo last", "Bad file!", "OK", 3)
 		endeditor
+		
 		selectObject: "TextGrid 'soundname$'"
-		if skipstat <> 2
+		if skipstat == 2
 			Save as text file: "'directory$''soundname$'.isBad"
-		else
+		elsif skipstat == 3
 			Save as text file: "'directory$''soundname$'.TextGrid"
+		elsif skipstat == 1
+			lastgridfile$ = "'directory$''lastsound$'.TextGrid"
+			lastbadfile$ = "'directory$''lastsound$'.isBad"
+			deleteFile: lastgridfile$
+			deleteFile: lastbadfile$
+			selectObject: "Sound 'soundname$'"
+			plusObject: "Sound 'soundname$'_band"
+			plusObject: "TextGrid 'soundname$'"
+			Remove
+			goto restart
 		endif
 		selectObject: "Sound 'soundname$'"
 		plusObject: "Sound 'soundname$'_band"
 		plusObject: "TextGrid 'soundname$'"
 		Remove
+		lastsound$ = soundname$
 	endif
 endfor
 select Strings list

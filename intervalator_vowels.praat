@@ -18,8 +18,9 @@ Add on tier 1
 Move cursor to... end
 Add on tier 1
 # Move cursor by... -0.0001
-Select next tier
+Select previous tier
 Select next interval
 Select next interval
 Zoom to selection
+Select next tier
 
