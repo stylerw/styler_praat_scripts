@@ -943,7 +943,7 @@ procedure addpoint
 endproc
 
 procedure dumpgraph
-		graphname$ = "'directory$'"+"'soundname$'"+ "_New" + ".pdf"
+		graphname$ = "'directory$'"+"'soundname$'"+ "_" + "'vowel_label$'" + ".pdf"
 		Viewport... 0 7 0 3.5
 		Text top... A1-P0/F1-Width across 'tpnum' points in 'soundname$'
 		Yellow

@@ -56,29 +56,30 @@ for j from 1 to number_of_files
                 
                 # Go through all intervals in the file
                 for k from 1 to number_of_intervals
-	    select TextGrid 'soundname$'
-	    seg_label$ = Get label of interval... 'tier_number' 'k'
-	    if seg_label$ <> ""
-	            seg_start = Get starting point... 'tier_number' 'k'
-	            seg_end = Get end point... 'tier_number' 'k'
-	            start = seg_start - 0.025
-	            end = seg_end + 0.025
-	            select Sound 'soundname$'
-	            Extract part: start, end, "rectangular", 1, "no"
-	            out_filename$ = "'out_dir$''soundname$'_'seg_label$'"
-	            aff = 1
-			name$ = out_filename$
-	            while fileReadable ("'out_filename$'.wav")
-		#out_filename$ = "'out_dir$''soundname$'-'seg_label$'-'k'"
-					aff = aff + 1
-					out_filename$ = "'name$'_'aff'"
-	            endwhile
-	            Write to WAV file... 'out_filename$'.wav
-	            select TextGrid 'soundname$'
-	            Extract part... 'start' 'end' no
-	            #Rename... 'out_filename$'
-	            Write to text file... 'out_filename$'.TextGrid
-	    endif
+	   		 		select TextGrid 'soundname$'
+	    			seg_label$ = Get label of interval... 'tier_number' 'k'
+			    	if seg_label$ <> ""
+			            seg_start = Get starting point... 'tier_number' 'k'
+			            seg_end = Get end point... 'tier_number' 'k'
+			            start = seg_start - 0.025
+			            end = seg_end + 0.025
+			            select Sound 'soundname$'
+			            Extract part: start, end, "rectangular", 1, "no"
+			            out_filename$ = "'out_dir$''soundname$'_'seg_label$'"
+						# initialize anti-collision counter.
+			            aff = 1
+						name$ = out_filename$
+			            while fileReadable ("'out_filename$'.wav")
+							#out_filename$ = "'out_dir$''soundname$'-'seg_label$'-'k'"
+							aff = aff + 1
+							out_filename$ = "'name$'_'aff'"
+			            endwhile
+			            Write to WAV file... 'out_filename$'.wav
+			            select TextGrid 'soundname$'
+			            Extract part... 'start' 'end' no
+			            #Rename... 'out_filename$'
+			            Write to text file... 'out_filename$'.TextGrid
+				    endif
                 endfor
                 select all
                 minus Strings list
