@@ -66,6 +66,9 @@ genvformnum = 5
 # Add a manual P1-Finding Step
 confirmp1 = 0
 
+# Dump spectra for debugging? (CAUTION: ~1Mb per timepoint)
+debug = 0
+
 ################# DON'T EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING :) ###############################################
 
 form Calculate A1, P0, P1 & duration for labeled vowels in files
@@ -697,7 +700,12 @@ procedure Individual_Pass
 									if confirmp1
 								    	call confirm_p1
 								    endif
-
+									# If you want to debug, dump that graph
+									if debug = 1
+										if vowel_label$ <> "n"
+											call debug_display
+										endif
+									endif
 									# This is the meat of the three-mode running
 									if manual = 1
 									# If it's full manual, then display everything regardless, verify, and then log
@@ -953,7 +961,73 @@ procedure dumpgraph
 		Save as PDF file... 'graphname$'
 		Erase all
 endproc
-	           
+
+# This procedure exists just to export spectra of each mesure for post-hoc debugging.
+procedure debug_display
+	# display the spectrum and LPC
+	Erase all
+	select Spectrum 'soundname$'
+	Viewport... 0 7 0 3.5
+	Draw... 0 3250 -40 80 yes
+	Marks bottom every... 1 500 yes no no
+	Marks bottom every... 1 250 no yes no
+	One mark top... 'f1_spec' no yes yes F1
+	One mark bottom... 'h1' no yes yes H1
+	One mark bottom... 'h2' no yes yes H2
+	#One mark top... 'p1freq' no yes yes P1
+
+	select Sound 'soundname$'_pulses
+	To LPC (autocorrelation)... 44 0.025 0.005 50
+	To Spectrum (slice)... 0.015 20 0 50
+	Rename... LPC_'soundname$'
+	spectrum_lpc = selected("Spectrum")
+	select 'spectrum_lpc'
+	Line width... 2
+	### Edit the fourth number below to control the high end of the dynamic range of the plot.  80 is a good default.
+	Draw... 0 3250 0 80 no
+	Line width... 1
+	# display the formant tracks overlaid on spectrogram.
+	Font size... 14
+	display_from = 'vowel_start' - 0.15
+	if ('display_from' < 0)
+	        display_from = 0
+	endif
+	display_until = 'vowel_end' + 0.15
+	if ('display_until' > 'finishing_time')
+	        display_until = 'finishing_time'
+	endif
+	select Sound 'soundname$'
+	To Spectrogram... 'length' 4000 0.002 20 Gaussian
+	spectrogram = selected("Spectrogram")
+	Viewport... 0 7 3.5 7
+	Paint... 'display_from' 'display_until' 0 4000 100 yes 50 6 0 no
+	select Sound 'soundname$'
+	noprogress To Formant (burg)... 0 formnum formrange 0.0256 50
+	select Formant 'soundname$'
+	Yellow
+	Speckle... 'display_from' 'display_until' 4000 30 no
+
+	Marks left every... 1 500 yes yes yes  
+	Viewport... 0 7 3.5 8
+	select TextGrid 'soundname$'
+	Black
+	Draw... 'display_from' 'display_until' no yes yes
+	One mark bottom... 'timepoint' yes yes yes
+	#One mark right... 'f1_spec' no yes yes
+	if uhoh = 0
+		Text top...  no H1: 'h1:0' *** H2: 'h2:0' *** A1: 'f1_spec:0' ***  P1: 'p1freq:0' *** 'flag$'
+	endif
+	if uhoh = 1
+		Text top...  no ERROR: Manual Measurement will be needed, 0 inserted
+	endif
+	graphname$ = "'directory$'"+"'soundname$'"+ "_" + "'vowel_label$'" + "_" + "'tpname'" + ".png"
+	Viewport... 0 7 0 8
+	Text top...  no 'soundname$' point 'tpname'
+	Save as 300-dpi PNG file: "'graphname$'"
+	Erase all
+endproc
+
+           
 procedure Verify_A1_P0
     select Sound 'soundname$'
     Edit
