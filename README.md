@@ -9,7 +9,7 @@ It accompanies Will's open-source Praat Textbook ['Using Praat for Linguistic Re
 
 These scripts, although in production use by the authors and others, still have a variety of bugs, quirks, and difficulties.  By using these scripts, you agree...
 
-- That you understand that these scripts may not reliably produce camera-ready data, and that all results must be hand-checked for sanity's sake. Pasting data from this script straight into your dissertation without careful review is not wise, as neither Praat, the script, nor the author(s) of the script should be trusted implicitly.  
+- That you understand that these scripts may not reliably produce camera-ready data, and that all results must be hand-checked for sanity's sake. Pasting data from this script straight into your dissertation without careful review is not wise, as neither Praat, the script, nor the author(s) of the script should be trusted implicitly.
 
 - That you understand that these scripts are a work in progress, which are far from perfect (and will contain bugs).  Future versions will be released here, and should be used when released to ensure improved results, but you will not necessarily be notified about them.  
 
@@ -21,7 +21,7 @@ These scripts, although in production use by the authors and others, still have 
 
 ... and, most importantly:
 
-- That neither Will Styler, nor the University of Colorado, nor anybody else sufficiently tolerant of crappy puns to associate with him, are responsible for the results obtained from the proper or improper usage of these scripts, and that the author(s) of the scripts are not responsible for notifying users in the event that a bug or other issue is found, even if said bug or issue has caused the script to produce errant results in the past.  
+- That neither Will Styler, nor the University of Colorado, nor the University of Michigan, nor anybody else sufficiently tolerant of crappy puns to associate with him, are responsible for the results obtained from the proper or improper usage of these scripts, and that the author(s) of the scripts are not responsible for notifying users in the event that a bug or other issue is found, even if said bug or issue has caused the script to produce errant results in the past.  
 
 Thanks for using my scripts and we hope it works wonderfully for you!
 
