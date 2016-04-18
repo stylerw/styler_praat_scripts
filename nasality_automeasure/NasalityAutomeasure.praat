@@ -1,7 +1,7 @@
 #######################################################################
 #
 #	Automated Nasality Measurement Script Package
-#	Nasality AutoMeasurement Script, version 5.8.1
+#	Nasality AutoMeasurement Script, version 5.8.2
 # 	Developed at the CU Phonetics Lab by Will Styler
 #
 #	This is the primary script in the package.  Please read the README.md file included with the script.
@@ -506,6 +506,7 @@ procedure Individual_Pass
 										endif
 									endif
 									
+									
 									if f1_lpc > hif1
 									# Again, whoa, this looks like the above.  See above comments.
 										if formiter = 0
@@ -574,16 +575,16 @@ procedure Individual_Pass
 								    ## Identifies the peak on the spectrum most likely to be F1, that is, the peak
 								    ## closest to the LPC F1 value that is within the range of one harmonic.
 									select Ltas 'soundname$'
-								    f1_spec = Get frequency of maximum... 'f1_lpc'-'f0_lpc' 'f1_lpc'+'f0_lpc' None
+								    f1_spec = Get frequency of maximum... 'f1_lpc'-150 'f1_lpc'+150 None
 									# Then get the amplitude
 								    a1_spec = Get value at frequency... 'f1_spec' Nearest
 									
 									# Get amplitude of F2
-								    f2_spec = Get frequency of maximum... 'f2_lpc'-'f0_lpc' 'f2_lpc'+'f0_lpc' None
+								    f2_spec = Get frequency of maximum... 'f2_lpc'-150 'f2_lpc'+150 None
 								    f2amp = Get value at frequency... 'f2_spec' Nearest
 																		
 									# Get amplitude of F3						
-								    f3_spec = Get frequency of maximum... 'f3_lpc'-'f0_lpc' 'f3_lpc'+'f0_lpc' None
+								    f3_spec = Get frequency of maximum... 'f3_lpc'-150 'f3_lpc'+150 None
 								    f3amp = Get value at frequency... 'f3_spec' Nearest
 								    f3freq = f3_lpc
 									
@@ -693,7 +694,15 @@ procedure Individual_Pass
 										status = 2
 										flag$ = "Shallow"
 									endif
+									
+									# Now let's make sure F1 isn't less than F0 (which happens when the LPC mis-predicts F1 for some higher pitched speakers)
+									if f1_spec < h1
+										status = 2
+										flag$ = "F1BelowH1"
+									endif
+									
 									label newpoint
+
 									
 									
 									# If you're a masochist and want to hand-confirm P1, this allows that.
@@ -1005,7 +1014,7 @@ procedure debug_display
 	noprogress To Formant (burg)... 0 formnum formrange 0.0256 50
 	select Formant 'soundname$'
 	Yellow
-	Speckle... 'display_from' 'display_until' 4000 30 no
+	#Speckle... 'display_from' 'display_until' 4000 30 no
 
 	Marks left every... 1 500 yes yes yes  
 	Viewport... 0 7 3.5 8
@@ -1142,7 +1151,12 @@ procedure Log_output
 	a1p0comp = a1amp - (highp0amp - t1 - t2)
 	a1p1comp = a1amp - (p1amp - p1t1 - p1t2)
 	a3p0 = f3amp - highp0amp
-		
+	
+	# Now, we make sure to mark those tokens where P0 == F1
+	if f1freq = highp0
+		flag$ = "A1isP0"
+	endif
+
     #save result to text file	            
     result_row$ = "'soundname$'" + tab$ + "'word_label$'" + tab$ + "'vowel_label$'" + tab$ + "'f1freq:0'" + tab$ + "'a1amp:2'" + tab$ + "'f1b_lpc:0'" + tab$ + "'f2freq:0'" + tab$ + "'f2amp:2'" + tab$ + "'f2b_lpc:0'" + tab$ + "'f3freq:0'" + tab$ + "'f3amp:2'" + tab$ + "'f3b_lpc:0'" + tab$ + "'h1freq:0'" + tab$ + "'h1amp:2'" + tab$ + "'h2freq:0'" + tab$ + "'h2amp:2'" + tab$ + "'h3amp:2'" + tab$ + "'highp0amp:2'" + tab$ + "'highp0:0'" + tab$ + "'highlabel$'" + tab$ + "'p0Prom:2'" + tab$ + "'a1p0h1:5'" + tab$ + "'a1p0h2:5'"  + tab$ + "'a1p0h3:5'" + tab$ + "'a1p0high:5'" + tab$ + "'a1p0comp:5'" + tab$ + "'p1freq:0'" + tab$ + "'p1amp:2'" + tab$ + "'a1p1:5'" + tab$ + "'a1p1comp:5'" + tab$ + "'a3p0:5'" + tab$ + "'rmsamp:10'" + tab$ + "'rndduration'" + tab$ + "'tpname'" + tab$ + "'timepoint:6'" + tab$ + "'vwlpct:2'" + tab$ + "'erroradj$'" + tab$ + "'stat$'" + tab$ + "'flag$'"
 

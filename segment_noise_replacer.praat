@@ -74,7 +74,7 @@ for j from 1 to number_files
 		select Sound noise
 		plus Sound 'soundname$'_part
 		do ("Concatenate")
-		Write to WAV file... 'directory$'_noised/'soundname$'_o.wav
+		#Write to WAV file... 'directory$'_noised/'soundname$'_o.wav
 		select TextGrid 'soundname$'
 		intstart = v_start
 		intend = v_end
@@ -82,7 +82,7 @@ for j from 1 to number_files
 
 		do ("Extract part...", 'intstart', 'intend' , "rectangular", 1,"no")
 		do ("Scale intensity...", 70)
-		#Write to WAV file... 'directory$'_noised/'soundname$'_vowel.wav
+		Write to WAV file... 'directory$'_noised/'soundname$'_vowel.wav
 		select TextGrid 'soundname$'
 		intstart = v_end
 		intend = filedur
@@ -99,7 +99,7 @@ for j from 1 to number_files
 		select Sound 'soundname$'_part
 		plus Sound noise
 		do ("Concatenate")
-		Write to WAV file... 'directory$'_noised/'soundname$'_c.wav
+		#Write to WAV file... 'directory$'_noised/'soundname$'_c.wav
 		select all
 		minus Strings list
 		Remove

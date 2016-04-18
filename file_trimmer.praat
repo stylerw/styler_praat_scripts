@@ -1,12 +1,10 @@
 #######################################################################
-#  File Segmenter Script
+#  File Trimmer Script
 #######################################################################
-#  This script divides a file into individual chunks that have been marked
-#  in some specified tier.  Each vowel is saved as an individual Praat
+#  This script trims a file to 50ms on either side of a marked interval
+#  Each vowel is saved as an individual Praat
 #  sound file with the name of the original file plus the interval
-#  label.  25 milliseconds is added to either side of the chunk to ensure
-#  that any analysis (with a 25ms window) made at the beginning of the chunk
-#  will not crash.
+#  label.
 #
 #  Input:   Sound files with associated TextGrids
 #           - TextGrids should have labels for relevant intervals (i.e.,
@@ -21,13 +19,11 @@
 #           (plus 25 ms before and after it) is saved as a new .wav file and
 #           a new text grid.  After all intervals in all files in the specified
 #           directory have been segmented, a finish message appears.
-
-# This script is not by Will Styler, but is distributed by him because it's super useful.
 #######################################################################
 
 form Chopping long sound files
    comment Specify which tier in the TextGrid you want to segment by:
-        integer tier_number 2
+        integer tier_number 1
    comment Sound file extension:
         optionmenu file_type: 2
         option .aiff
@@ -63,24 +59,19 @@ for j from 1 to number_of_files
 			    	if seg_label$ <> ""
 			            seg_start = Get starting point... 'tier_number' 'k'
 			            seg_end = Get end point... 'tier_number' 'k'
-			            start = seg_start - 0.025
-			            end = seg_end + 0.025
 			            select Sound 'soundname$'
+						seg_start_z = Get nearest zero crossing... 1 seg_start
+						seg_end_z = Get nearest zero crossing... 1 seg_end
+			            start = seg_start_z - 0.050
+			            end = seg_end_z + 0.050
 			            Extract part: start, end, "rectangular", 1, "no"
 						if namebase$ <> ""
 			            	out_filename$ = "'out_dir$''namebase$'_'seg_label$'"
 						else
-			            	out_filename$ = "'out_dir$''soundname$'_'seg_label$'"
+			            	out_filename$ = "'out_dir$''soundname$'"
 						endif
-						# initialize anti-collision counter.
-			            aff = 1
-						name$ = "'out_filename$'_'aff'"
-			            while fileReadable ("'name$'.wav")
-							#out_filename$ = "'out_dir$''soundname$'-'seg_label$'-'k'"
-							aff = aff + 1
-							name$ = "'out_filename$'_'aff'"
-			            endwhile
-			            Write to WAV file... 'name$'.wav
+						    name$ = "'out_filename$'_trimmed"
+			          	  Write to WAV file... 'name$'.wav
 			            select TextGrid 'soundname$'
 			            Extract part... 'start' 'end' no
 			            #Rename... 'out_filename$'
@@ -94,5 +85,5 @@ for j from 1 to number_of_files
 endfor
 select all
 Remove
-print All files have been segmented.
+print All files have been trimmed.
 

@@ -316,6 +316,12 @@ If you have any further questions, email will@savethevowels.org.  If not, have f
 
 * Version 5.8.1 (May 2015): **Initial Public Release!**.  Updated documentation to reflect the now-public nature of the script, and added discussion of the intricacies of vowel nasality.  No changes were made to the function or code of the script from 5.8.1.
 
+* Version 5.8.2 (Feb 2016): 
+	* Added Debug mode (modify the var early in the script to start) which will allow you to dump to file a spectrum and spectrogram of each point.  Really handy for generating plots for papers and for figuring out what the heck is wrong with the script in a given dataset.  
+	* It also changes the behavior for Formant-finding.  Basing it on F0 results in absurdly large ranges for High F0 speakers ("F1 is the highest peak within 600 Hz of what the LPC claims"), so it's now fixed to the highest peak +/- 150 Hz of the LPC.
+	* The script now flags situations where F1 is "found" at a lower frequency than H1.  This happens rarely with speakers with high F0.  
+
+
 ## References
 
 M. Y. Chen. Acoustic Parameters of Nasalized Vowels in Hearing-Impaired and Normal-Hearing Speakers. *The Journal of the Acoustical Society of America*, 98(5):2443–2453, 1995.
