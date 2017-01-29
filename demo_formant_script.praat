@@ -54,7 +54,7 @@ for j from 1 to number_files
 
 				# Get all the formants!
 				select Sound 'soundname$'
-				To Formant (burg)... 0 5 5500 0.025 50
+				noprogress To Formant (burg)... 0 5 5500 0.025 50
 				intf1 = Get value at time... 1 'intmid' Hertz Linear
 				intf2 = Get value at time... 2 'intmid' Hertz Linear
 				intf3 = Get value at time... 3 'intmid' Hertz Linear

@@ -28,6 +28,8 @@ form Chopping long sound files
         optionmenu file_type: 2
         option .aiff
         option .wav
+   comment Replace surrounding 50ms with silence?
+  		boolean silence yes
    comment Filename base (soundfile name if left blank)
    		word namebase
 endform
@@ -62,19 +64,35 @@ for j from 1 to number_of_files
 			            select Sound 'soundname$'
 						seg_start_z = Get nearest zero crossing... 1 seg_start
 						seg_end_z = Get nearest zero crossing... 1 seg_end
-			            start = seg_start_z - 0.050
-			            end = seg_end_z + 0.050
-			            Extract part: start, end, "rectangular", 1, "no"
+						if silence
+							Create Sound from formula: "startsilence", 1, 0, 0.05, 44100, "0"
+							select Sound 'soundname$'
+							Extract part: seg_start_z, seg_end_z, "rectangular", 1, "no"
+							Create Sound from formula: "endsilence", 1, 0, 0.05, 44100, "0"
+							select Sound startsilence
+							plus Sound 'soundname$'
+							plus Sound endsilence
+							Concatenate
+						else
+			            	start = seg_start_z - 0.050
+			           		end = seg_end_z + 0.050
+			           		Extract part: start, end, "rectangular", 1, "no"
+						endif
 						if namebase$ <> ""
 			            	out_filename$ = "'out_dir$''namebase$'_'seg_label$'"
 						else
 			            	out_filename$ = "'out_dir$''soundname$'"
 						endif
-						    name$ = "'out_filename$'_trimmed"
-			          	  Write to WAV file... 'name$'.wav
+						name$ = "'out_filename$'_trim"
+			          	Write to WAV file... 'name$'.wav
 			            select TextGrid 'soundname$'
-			            Extract part... 'start' 'end' no
-			            #Rename... 'out_filename$'
+						if silence
+							Extract part... seg_start_z seg_end_z no
+							Extend time: 0.05, "Start"
+							Extend time: 0.05, "End"
+						else
+			            	Extract part... 'start' 'end' no
+						endif
 			            Write to text file... 'name$'.TextGrid
 				    endif
                 endfor

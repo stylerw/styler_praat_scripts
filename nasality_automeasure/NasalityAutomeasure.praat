@@ -93,7 +93,7 @@ form Calculate A1, P0, P1 & duration for labeled vowels in files
 	comment Iterate Pulses, or use actual vowel?
 		boolean iterate yes
 	comment Scoot in how much (in seconds) from each edge?
-		real scoot 0.010
+		real scoot 0.000
 endform
 
 
