@@ -3,10 +3,10 @@
 # Will Styler, 1/30/2017
 #
 # This script is designed to go through a folder of words and textgrids and extract and save one FFT per file at a given location in the (sole) labeled interval.
-# One interval per file will be saved.  If multiples, it'll be the last interval.
+# One interval per file will be saved.  If multiples, it'll be the last interval.  This will create a _slices directory in the folder you're reading from.
 # 
 # This part presents a form to the user
-form Measure Formants and Duration
+form Extract FFTs from all labeled intervals
 	comment Sound file extension:
         optionmenu file_type: 2
         option .aiff
@@ -58,9 +58,14 @@ for j from 1 to number_files
 				Rename... fftpart
 				noprogress To Spectrum (fft)
 				Select outer viewport: 0, 8, 0, 5.5
-				Draw: 0, 3500, 0, 0, "no"
+Line width: 1.6
+
+				Draw: 0, 3500, 0, 60, "no"
+Line width: 1.0
+
 				Draw inner box
 				Marks bottom: 8, "yes", "yes", "yes"
+				Marks left: 7, "yes", "yes", "yes"
 				Save as 300-dpi PNG file: "'directory$'_slices/'soundname$'.png"
 				Erase all
 			endif
