@@ -1,7 +1,7 @@
-#######################################################################
+######################################################################
 #
 #	Automated Nasality Measurement Script Package
-#	Nasality AutoMeasurement Script, version 5.8.2
+#	Nasality AutoMeasurement Script, version 5.9
 # 	Developed at the CU Phonetics Lab by Will Styler
 #
 #	This is the primary script in the package.  Please read the README.md file included with the script.
@@ -13,7 +13,7 @@
 #    	based on a nasality measurement script written by Sarah Johnstone, with bits 
 #   	of code borrowed from scripts by Bert Remijsen, Mietta Lennes, and Katherine
 #    	Crosswhite.  Error control, Automation and UI improvements were later added 
-#		by Will Styler, 2008-2015.  
+#		by Will Styler, 2008-2017.  
 #
 #	This script package is maintained at https://github.com/stylerw/styler_praat_scripts
 #
@@ -176,37 +176,17 @@ procedure Individual_Pass
 			if fileReadable (gridfile$)
 				Read from file... 'gridfile$'
 				select TextGrid 'soundname$'
-				### This next line will break if there's more than one word per file, as it specifies the word is the 2nd interval on the word tier.
-				wordint = 2
-				# if there's a word label, extract it
-				if wordtier <> voweltier
-					if wordlab = 1
-						label newwordint
-						word_label$ = Get label of interval... 'wordtier' 'wordint'
-						if word_label$ = ""
-							wordint = wordint + 1
-							goto newwordint
-						endif
-					else
-					# If there's no word label, just use "None" for that column.
-						word_label$ = "None"
-					endif
-				else
-					word_label$ = "None"
-				endif
-				
-				select TextGrid 'soundname$'
 				number_intervals = Get number of intervals... 'voweltier'
 				# Go through all vowel intervals in the file
 				# Starting from here, add everything that should be repeated for each vowel
 				
 				### THESE NEXT LINES ALLOW YOU TO MEASURE ONLY THE LAST LABELED INTERVAL, so, for instance, the final vowel ONLY in a multi-labeled-vowel word.  It's a kludge, and you'll also need to uncomment the "if k = lastint" line below
-				for kludge from 1 to number_intervals
-					vowel_label$ = Get label of interval... 'voweltier' 'kludge'
-					if vowel_label$ <> ""
-						lastint = kludge
-					endif
-				endfor
+#				for kludge from 1 to number_intervals
+#					vowel_label$ = Get label of interval... 'voweltier' 'kludge'
+#					if vowel_label$ <> ""
+#						lastint = kludge
+#					endif
+#				endfor
 				
 				# Now we check *every* interval on the vowel tier.
 				for k from 1 to number_intervals
@@ -252,36 +232,38 @@ procedure Individual_Pass
 							origformnum = genvformnum
 						endif
 
-							# Calculate some temporal stuff
-							select TextGrid 'soundname$'
-							vowel_start = Get starting point... 'voweltier' 'k'
-							vowel_end = Get end point... 'voweltier' 'k'
-							midpoint = vowel_start + ((vowel_end - vowel_start) / 2)
-							duration = (vowel_end - vowel_start) * 1000
-							durationms = (vowel_end - vowel_start)
+						# Calculate some temporal stuff
+						select TextGrid 'soundname$'
+						vowel_start = Get starting point... 'voweltier' 'k'
+						vowel_end = Get end point... 'voweltier' 'k'
+						midpoint = vowel_start + ((vowel_end - vowel_start) / 2)
+						duration = (vowel_end - vowel_start) * 1000
+						durationms = (vowel_end - vowel_start)
+					
+						# Get the time of the end of the word, for later
+						finishing_time = Get finishing time
 						
-							# Get the time of the end of the word, for later
-							finishing_time = Get finishing time
-							
-							# Round the duration for display
-							rndduration = round('duration')
+						# Round the duration for display
+						rndduration = round('duration')
 
-							# If the words are labeled...
-							if wordlab = 1
-								word_start = Get starting point... 'wordtier' 'wordint'
-								word_end = Get end point... 'wordtier' 'wordint'
-								select Sound 'soundname$'
-								Extract part...  'word_start' 'word_end' Rectangular 1 yes
-								Rename... 'soundname$'_word
-								#save the word that the vowel is contained in to a temporary soundfile for anaylsis
-							else
-							# If the words are unlabeled, assume that you'll need half a second to either side of the vowel as context.  Then extract that.
-								prevowel = vowel_start - 0.5
-								postvowel = vowel_end + 0.5
-								select Sound 'soundname$'
-								Extract part...  'prevowel' 'postvowel' Rectangular 1 yes
-								Rename... 'soundname$'_word
-							endif
+						# If the words are labeled...
+						if wordlab = 1
+							## Word label extraction courtesy R. Scarborough
+							wordint = Get interval at time... 'wordtier' 'midpoint'
+							word_label$ = Get label of interval... 'wordtier' 'wordint'
+						else
+							word_label$ = "Unlabeled"
+						endif
+						
+						# Check to see if it's a certain word (or not)
+						if word_label$ <> "Supercalifragilisticexpialidocious"
+							# Extract half a second to either side of the vowel so there's some word context
+							prevowel = vowel_start - 0.5
+							postvowel = vowel_end + 0.5
+							select Sound 'soundname$'
+							Extract part...  'prevowel' 'postvowel' Rectangular 1 yes
+							Rename... 'soundname$'_word
+	
 							select Sound 'soundname$'_word
 							# Determine the span covered by each bin (the duration/number of timepoints-1)
 							size = durationms / (tpnum-1)
@@ -289,7 +271,7 @@ procedure Individual_Pass
 							if graphdump
 								call startgraph
 							endif
-							
+						
 							# Iterate through the timepoints
 							for point from 1 to tpnum
 								# No problems yet.  Set the flag to none
@@ -337,10 +319,10 @@ procedure Individual_Pass
 									# tpnum = number of timepoints
 									# timepoint = the time of the measure in the word
 									# point = the point number
-									
+								
 									# If we're doing the whole extract-and-iterate game, which pulls out a single pulse and iterates it to get a cleaner signal...
 									if iterate
-									    select Sound 'soundname$'
+									    select Sound 'soundname$'_word
 										# Make a point process to get pulse info
 										noprogress do ("To PointProcess (periodic, cc)...", 75, 600)
 										# Choose the pulse
@@ -353,7 +335,7 @@ procedure Individual_Pass
 											pulse_begin_index = Get low index... 'timepoint'
 											pulse_end_index = pulse_begin_index + 1
 									    endif
-										
+									
 										#### confirm pulse length to avoid some crashes
 										if pulse_begin_index = 0
 											pulse_begin_index = 1
@@ -381,12 +363,12 @@ procedure Individual_Pass
 											uhoh = 1
 											flag$ = "Crash-EndPulseUndef"
 										endif
-										
+									
 										# Now, finally extract the pulse
-										select Sound 'soundname$'
+										select Sound 'soundname$'_word
 										Extract part... 'pulse_begin_time' 'pulse_end_time' Rectangular 1 no
 										Rename... 'soundname$'_onepulse
-										
+									
 										# and iterate it until it's half a second long, for good F0 resolution
 										select Sound 'soundname$'_onepulse
 										Copy... 
@@ -400,7 +382,7 @@ procedure Individual_Pass
 										Rename... 'soundname$'_pulses
 										# Set the timepoint of the measurement to 0.25, which is the middle of the chunk created above
 										mtimepoint = 0.25
-										
+									
 									# If, on the other hand, we're not iterating, just call the chunk "_pulses" to interface with the code later and move on with life.
 									else
 										select Sound 'soundname$'_word
@@ -410,25 +392,25 @@ procedure Individual_Pass
 									endif
 
 									# At this point, measurement will happen to anything called 'soundname$'_pulses.  The code below can be extracted for use with anything which needs to find the data for an already-extracted file.
-									
-									
+								
+								
 									# Reset some stuff
 									erroradj$ = "None"
 									uhoh = 0
 									itercount = 1
 									status = 1
 									formiter = 0
-									
+								
 									##### A1-P0 PREP
 									label formantmeasures
 								    select Sound 'soundname$'_pulses
 								    # Here's where we grab formants using the formnum settings earlier
 									noprogress To Formant (burg)... 0 formnum formrange 0.0256 50
 								    select Formant 'soundname$'_pulses
-																		
+																	
 									# First, get MeanF1, so we can fall back to it.
 									meanf1 = Get mean... 1 vowel_start vowel_end Hertz
-									
+								
 									# Get F1 from the LPC
 									f1_lpc = Get value at time... 1 'mtimepoint' Hertz Linear
 									# if f1_lpc is undefined, Praat crashes without this code
@@ -448,7 +430,7 @@ procedure Individual_Pass
 									# If F1's cool, get the bandwidth
 										f1b_lpc = Get bandwidth at time... 1 'mtimepoint' Hertz Linear
 									endif
-									
+								
 									# Whoa.  This looks like the code for F1.  See comments above :)
 									meanf2 = Get mean... 2 vowel_start vowel_end Hertz
 									f2_lpc = Get value at time... 2 'mtimepoint' Hertz Linear
@@ -464,7 +446,7 @@ procedure Individual_Pass
 									else
 										f2b_lpc = Get bandwidth at time... 2 'mtimepoint' Hertz Linear
 									endif
-									
+								
 									# Collect F3, same method.
 									meanf3 = Get mean... 3 vowel_start vowel_end Hertz
 									f3_lpc = Get value at time... 3 'mtimepoint' Hertz Linear
@@ -480,7 +462,7 @@ procedure Individual_Pass
 									else
 										f3b_lpc = Get bandwidth at time... 3 'mtimepoint' Hertz Linear
 									endif
-									
+								
 									if f1_lpc < lof1
 									# So if F1 is that low, it's likely grabbed an additional "formant" down low.  The fix is to look for fewer formants.  Now, it tries this automatically, then checks for undefined items again to make it more crash-resistant.
 										# Only correct and check once, then just report the failure
@@ -505,8 +487,8 @@ procedure Individual_Pass
 											endif
 										endif
 									endif
-									
-									
+								
+								
 									if f1_lpc > hif1
 									# Again, whoa, this looks like the above.  See above comments.
 										if formiter = 0
@@ -527,10 +509,10 @@ procedure Individual_Pass
 											endif
 										endif
 									endif
-									
+								
 									# Reset the formant number for the next word
 									formnum = origformnum
-									
+								
 									# Now we move to pitch. 
 								    select Sound 'soundname$'_pulses
 									# Make a pitch object, using the defined highest H1 as the top of the range.
@@ -563,7 +545,7 @@ procedure Individual_Pass
 									tpslicehigh = 'mtimepoint' + 0.015
 									Extract part... 'tpslicelow' 'tpslicehigh' Hamming 1 no
 									Rename... slice
-									
+								
 									#### A1-P0 Calc
 								    select Sound slice
 									# First make a spectrum, then an LTAS (which is the only way to find harmonic heights in Praat for some reason)
@@ -571,28 +553,28 @@ procedure Individual_Pass
 								    Rename... 'soundname$'
 								    noprogress To Ltas (1-to-1)
 								    Rename... 'soundname$'
-									
+								
 								    ## Identifies the peak on the spectrum most likely to be F1, that is, the peak
 								    ## closest to the LPC F1 value that is within the range of one harmonic.
 									select Ltas 'soundname$'
 								    f1_spec = Get frequency of maximum... 'f1_lpc'-150 'f1_lpc'+150 None
 									# Then get the amplitude
 								    a1_spec = Get value at frequency... 'f1_spec' Nearest
-									
+								
 									# Get amplitude of F2
 								    f2_spec = Get frequency of maximum... 'f2_lpc'-150 'f2_lpc'+150 None
 								    f2amp = Get value at frequency... 'f2_spec' Nearest
-																		
+																	
 									# Get amplitude of F3						
 								    f3_spec = Get frequency of maximum... 'f3_lpc'-150 'f3_lpc'+150 None
 								    f3amp = Get value at frequency... 'f3_spec' Nearest
 								    f3freq = f3_lpc
-									
+								
 									# Rename Bandwidths for printing
 									f1width = f1b_lpc
 									f2width = f2b_lpc
 									f3width = f3b_lpc
-									
+								
 								    ## Identifies the peaks most likely to be H1, H2, and H3 using an arbitrary
 								    ## search window that has been, in practice, almost always sufficient.  Then get amplitudes
 
@@ -602,12 +584,12 @@ procedure Individual_Pass
 								    h1_amp = Get value at frequency... 'h1' Nearest
 								    h2_amp = Get value at frequency... 'h2' Nearest
 									h3amp = Get value at frequency... 'h3' Nearest
-									
+								
 									# Get P1 one the basis of 
 									p1freq = Get frequency of maximum... 'lowp1' 'highp1' None
 
 								    p1amp = Get value at frequency... 'p1freq' Nearest
-									
+								
 									# This controls the "remeasure" section.  Basically, if you're tried 5 remeasures, just fail.  It's not gonna happen.
 									label reamp
 									if reampcount < 5
@@ -637,7 +619,7 @@ procedure Individual_Pass
 										hP0down = h1_amp
 										p0Prom = h2_amp - ((hP0up+hP0down)/2)
 									endif
-									
+								
 
 									### Checks and Balances
 
@@ -694,17 +676,17 @@ procedure Individual_Pass
 										status = 2
 										flag$ = "Shallow"
 									endif
-									
+								
 									# Now let's make sure F1 isn't less than F0 (which happens when the LPC mis-predicts F1 for some higher pitched speakers)
 									if f1_spec < h1
 										status = 2
 										flag$ = "F1BelowH1"
 									endif
-									
+								
 									label newpoint
 
-									
-									
+								
+								
 									# If you're a masochist and want to hand-confirm P1, this allows that.
 									if confirmp1
 								    	call confirm_p1
@@ -762,8 +744,7 @@ procedure Individual_Pass
 									Remove
 								endif
 							endfor
-
-						label newword
+						endif
 					endif
 				endfor
 			

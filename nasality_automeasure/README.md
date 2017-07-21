@@ -321,7 +321,11 @@ If you have any further questions, email will@savethevowels.org.  If not, have f
 	* It also changes the behavior for Formant-finding.  Basing it on F0 results in absurdly large ranges for High F0 speakers ("F1 is the highest peak within 600 Hz of what the LPC claims"), so it's now fixed to the highest peak +/- 150 Hz of the LPC.
 	* The script now flags situations where F1 is "found" at a lower frequency than H1.  This happens rarely with speakers with high F0.  
 
-
+* Version 5.9 (July 2017)
+	* Added fixes for large, multi-word files from Rebecca Scarborough
+	* Moved to non-word-based boundaries for extract-and-iterate in all cases
+	* Added option to specifically include (or exclude) a word based on grid labels
+	
 ## References
 
 M. Y. Chen. Acoustic Parameters of Nasalized Vowels in Hearing-Impaired and Normal-Hearing Speakers. *The Journal of the Acoustical Society of America*, 98(5):2443–2453, 1995.
