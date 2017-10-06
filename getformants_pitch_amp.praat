@@ -15,7 +15,7 @@ directory$ = chooseDirectory$ ("Choose the directory containing sound files and 
 directory$ = "'directory$'" + "/" 
 resultfile$ = "'directory$'"+"arapahopitchlog.txt"
 
-header_row$ = "filename" + tab$ + "word" + tab$ + "vowel" + tab$ + "Duration" + tab$ + "MaxF0" + tab$ + "MeanF0" + tab$ + "MaxAmp" + tab$ + "MeanAmp" + tab$ + "MaxF0" + tab$ + "F1" + tab$ + "F2" + tab$ + "F3" + newline$
+header_row$ = "filename" + tab$ + "word" + tab$ + "vowel" + tab$ + "Duration" + tab$ + "MaxF0" + tab$ + "MeanF0" + tab$ + "MaxAmp" + tab$ + "MeanAmp" + tab$ + "F1" + tab$ + "F2" + tab$ + "F3" + newline$
 
 fileappend "'resultfile$'" 'header_row$'
 
