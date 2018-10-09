@@ -1,5 +1,5 @@
 # Nasality Automeasure Script Package - README
-Developed at the University of Colorado's Phonetics Lab by Will Styler and Rebecca Scarborough.  Available from: https://github.com/stylerw/styler_praat_scripts
+Developed at the University of Colorado's Phonetics Lab by Will Styler and Rebecca Scarborough, and maintained by Will Styler.  Available from: https://github.com/stylerw/styler_praat_scripts
 
 # Introduction
 
@@ -7,7 +7,7 @@ So, you've decided to do some nasality measurements on your data using our scrip
 
 ## Disclaimer:
 
-This script package, although in production use by the authors and others at the CU Phonetics Lab, may still have bugs and quirks, alongside the difficulties and provisos which are described throughout the documentation. 
+This script package, although in production use by the authors and others at the CU Phonetics Lab, the University of Michigan, UC San Diego, and elsewhere, may still have bugs and quirks, alongside the difficulties and provisos which are described throughout the documentation. 
 
 By using this script, you acknowledge:
 
@@ -25,7 +25,7 @@ By using this script, you acknowledge:
 
 ... and, most importantly:
 
-* That neither Will Styler, nor the members of the CU Phonetics lab, nor the University of Colorado on the whole, are responsible for the results obtained from the proper or improper usage of the script, and that the script is provided as-is, as a service to our fellow linguists.
+* That neither Will Styler, nor the members of the CU Phonetics lab, nor the University of Colorado on the whole, nor any other institution, are responsible for the results obtained from the proper or improper usage of the script, and that the script is provided as-is, as a service to our fellow linguists.
 
 Thanks for using our script, and we hope it works wonderfully for you!
 
@@ -39,11 +39,13 @@ This script has provided meaningful data, used in a variety of publications in o
 
 * **However**, A1-P0 measurements are not meaningful at a token-by-token level.  Although one can safely (and easily) find patterns of nasality in a large dataset, for any given measurement, particularly when found automatically, one cannot make claims like "*This particular vowel* is nasalized".  The best approach is to compare large groups of tokens across differing conditions.
 
-* **Crucially**, A1-P0 measurement values *cannot be compared across speakers*.  There is evidence (see Styler 2015) that speakers vary both in terms of their base value of A1-P0 (their mean values for oral and nasal vowels), as well as the range between oral and nasal vowels.  This means that although you can safely compare within-speaker changes across conditions ("Across all speakers, vowels were more nasal in NVNs than NVCs"), *you cannot reliably compare across-speaker changes in degree* ("Speakers are more nasal in Boston than Denver" or "L2 speakers show greater nasality than L1 speakers") using A1-P0.  
+* **Crucially**, A1-P0 measurement values *cannot be compared across speakers*.  There is evidence (see Styler 2017) that speakers vary both in terms of their base value of A1-P0 (their mean values for oral and nasal vowels), as well as the range between oral and nasal vowels.  This means that although you can safely compare within-speaker changes across conditions ("Across all speakers, vowels were more nasal in NVNs than NVCs"), *you cannot reliably compare across-speaker changes in degree* ("Speakers are more nasal in Boston than Denver" or "L2 speakers show greater nasality than L1 speakers") using A1-P0.  
 
 * Although we've seen promise for some of the secondary measures of nasality (A3-P0, P0Prominence, Formant Bandwidths) (see Styler 2015), they have not been vetted in the literature, and their measurement is not as well studied or established.  Because much less is known about these measures, they should be used carefully.
 
 * Secondary measures (mainly vowel formant frequencies and bandwidths) are not treated as cautiously in the script, and are not automatically sanity-checked.  They are derived directly from Praat's LPCs, with little processing.  Please treat the formant output of this script as one might any other formant analysis script.
+
+- Please see [my 2017 JASA paper](http://wstyler.ucsd.edu/files/styler2017_jasa_onacousticalnatureofnasality.pdf) for a more up-to-date survey of some of the problems inherent in acoustical measurement of nasality.
 
 ## About the Script
 
@@ -85,7 +87,7 @@ You may stop at any point in the dataset, and Praat will simply return to where 
 
 Nasality Measurement code originally written by Rebecca Scarborough based on a nasality measurement script written by Sarah Johnstone, with bits of code borrowed from scripts by Bert Remijsen, Mietta Lennes, and Katherine Crosswhite.  
 
-Error control, Automation and UI improvements (in Version 3+) were later added by Will Styler, 2008-2015.  Will is the current maintainer of the code.
+Error control, Automation and UI improvements (in Version 3+) were later added by Will Styler, 2008-2018.  Will is the current maintainer of the code.
 
 ## Installation:
 
@@ -333,3 +335,5 @@ M. Y. Chen. Acoustic Parameters of Nasalized Vowels in Hearing-Impaired and Norm
 M. Y. Chen. Acoustic correlates of English and French nasalized vowels. *The Journal of the Acoustical Society of America*, 102(4):2350–2370, 1997.
 
 W. Styler. *On the Acoustical and Perceptual Features of Vowel Nasality*. PhD thesis, University of Colorado at Boulder, March 2015.
+
+W. Styler. On the Acoustical Features of Vowel Nasality in English and French. Journal of the Acoustical Society of America. 142(4):2469-2482. Oct. 2017.
