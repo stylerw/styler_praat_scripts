@@ -1,5 +1,5 @@
 #######################################################################
-#  Formant Measurement Script, v.3.1
+#  Formant Measurement Script, v.3.2
 #######################################################################
 #  This script measures formant values at beginning, midpoint, and end
 #  for vowels marked in a TextGrid annotated sound.  It also allows the
@@ -10,8 +10,8 @@
 #           - Files may contain multiple vowels to be measured.
 #           - TextGrids should have at least 2 tiers:  one for vowels and
 #             one for words.  Relevant vowel intervals must be labeled.
-#           - As currently written, each word must contain exactly 1 vowel.
-#  Output:  A log file containing - file name, word, vowel, F1, F2,
+#           - If the textgrid doesn't have word labeled, you can put '0' for the word tier and it'll work on the whole file.
+#           #  Output:  A log file containing - file name, word, vowel, F1, F2,
 #           duration, and timepoint (start, midpoint, end).
 #  Process: The script looks for soundfiles with a specified extension in a
 #           specified folder.  For each soundfile, it finds the associated
@@ -36,6 +36,7 @@
 #
 #	Version 3.0.1: Added folder chooser dialog to script
 #	Version 3.1 (May 2015): Added ability to measure N points per vowel
+#	Version 3.2 (Dec 2020): Added ability to enter '0' for word tier, and then have that treat each file as the whole word. Also removed references to biological gender, replacing with 'formant range'
 #
 #######################################################################
 
@@ -47,18 +48,16 @@ form Calculate F1, F2 & duration for labeled vowels in files
         optionmenu file_type: 2
         option .aiff
         option .wav
-   comment Select sex of speaker:
-        choice sex 2
-        button male
-        button female
    comment Length of window over which spectrogram is calculated:
         positive length 0.005
    comment Play sound?
         choice playit 2
         button yes
         button no
-   	 comment How many formants (in 5000hz)?
+   	 comment Look for how many formants (in the range below)?
         positive numformants 5
+     comment Search for formants in 0-___ Hz?
+        positive formantrange 5000
     comment How many measures per vowel?
          positive tpnum 12
 endform
@@ -97,8 +96,12 @@ for j from 1 to number_files
 	for k from 1 to number_intervals
 	    select TextGrid 'soundname$'
 	    vowel_label$ = Get label of interval... 'vowel' 'k'
-	    ## hack -- next line only works if there is exactly one vowel per word ##
-	    word_label$ = Get label of interval... 'word' 2
+	    ## hack -- next line only works if there is exactly one vowel per word 
+        if word == 0
+            word_label$ = "Unlabeled"
+	    else
+            word_label$ = Get label of interval... 'word' 2
+        endif
 	    #checks if interval has a labeled vowel
 	    if vowel_label$ <> ""
 			vowel_start = Get starting point... 'vowel' 'k'
@@ -108,22 +111,20 @@ for j from 1 to number_files
 			durationms = (vowel_end - vowel_start)
 			
 			finishing_time = Get finishing time
-			#save the word that the vowel is contained in to a temporary soundfile for anaylsis
-			word_start = Get starting point... 'word' 2
-			word_end = Get end point... 'word' 2
 			select Sound 'soundname$'
-			Extract part...  'word_start'-0.25 'word_end'+0.25 Hanning 1 yes
-			Rename... 'soundname$'_word
+            if word == 0
+                Copy... 'soundname$'_word
+            else
+            #save the word that the vowel is contained in to a temporary soundfile for anaylsis
+			    word_start = Get starting point... 'word' 2
+			    word_end = Get end point... 'word' 2
+		    	Extract part...  'word_start'-0.25 'word_end'+0.25 Hanning 1 yes
+		    	Rename... 'soundname$'_word
+            endif
 			finalformantnumber = numformants
-
 			#create formant object
 			select Sound 'soundname$'_word
-			if sex = 2
-				#### Originally 0.0025 in default, CHANGE ME AND EXPERIMENT!!!
-				To Formant (burg)... 0.0 'finalformantnumber' 5500 0.025 50
-			else
-				To Formant (burg)... 0.0 'finalformantnumber' 5000 0.025 50
-			endif
+			To Formant (burg)... 0.0 'finalformantnumber' 'formantrange' 0.025 50
 			size = durationms / (tpnum-1)
 			skipstat = 1
 			# cycle through measurement timepoints (start, mid, end)
