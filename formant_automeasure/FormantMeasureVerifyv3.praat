@@ -116,10 +116,12 @@ for j from 1 to number_files
                 Copy... 'soundname$'_word
             else
             #save the word that the vowel is contained in to a temporary soundfile for anaylsis
-			    word_start = Get starting point... 'word' 2
-			    word_end = Get end point... 'word' 2
-		    	Extract part...  'word_start'-0.25 'word_end'+0.25 Hanning 1 yes
-		    	Rename... 'soundname$'_word
+						select TextGrid 'soundname$'
+						word_start = Get starting point... 'word' 2
+						word_end = Get end point... 'word' 2
+						select Sound 'soundname$'
+						Extract part...  'word_start'-0.25 'word_end'+0.25 Hanning 1 yes
+						Rename... 'soundname$'_word
             endif
 			finalformantnumber = numformants
 			#create formant object
