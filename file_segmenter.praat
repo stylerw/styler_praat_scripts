@@ -27,7 +27,7 @@
 
 form Chopping long sound files
    comment Specify which tier in the TextGrid you want to segment by:
-        integer tier_number 2
+        integer tier_number 3
    comment Sound file extension:
         optionmenu file_type: 2
         option .aiff
@@ -68,18 +68,23 @@ for j from 1 to number_of_files
 			            select Sound 'soundname$'
 			            Extract part: start, end, "rectangular", 1, "no"
 						if namebase$ <> ""
-			            	out_filename$ = "'out_dir$''namebase$'_'seg_label$'"
+			            	writename$ = "'namebase$'_'seg_label$'"
 						else
-			            	out_filename$ = "'out_dir$''soundname$'_'seg_label$'"
+			            	writename$ = "'soundname$'_'seg_label$'"
 						endif
+						# Although you should use ASCII when making textgrids, this bit removes some instacrashes
+						writename$ = replace$ (writename$, " ", "_", 0)
+						writename$ = replace$ (writename$, "/", "_", 0)
+						out_filename$ = "'out_dir$''writename$'"
 						# initialize anti-collision counter.
-			            aff = 1
+			        aff = 1
 						name$ = "'out_filename$'_'aff'"
-			            while fileReadable ("'name$'.wav")
-							#out_filename$ = "'out_dir$''soundname$'-'seg_label$'-'k'"
+
+						#writeInfo: name$
+			        while fileReadable ("'name$'.wav")
 							aff = aff + 1
 							name$ = "'out_filename$'_'aff'"
-			            endwhile
+			        endwhile
 			            Write to WAV file... 'name$'.wav
 			            select TextGrid 'soundname$'
 			            Extract part... 'start' 'end' no

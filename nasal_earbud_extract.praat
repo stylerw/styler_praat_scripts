@@ -245,7 +245,7 @@ for ifile to number_files
 			vwlpct = ((timepoint-intstart)/intdur)*100
 			
 			result_row$ = "'soundname$'" + tab$ + "'point'" + tab$ + "'vwlpct:2'" + tab$ + "'naspasc:10'" + tab$ + "'orpasc:10'" + tab$ + "'percnas:5'" + tab$ + "'timepoint:4'" + newline$
-			#fileappend "'resultfile$'" 'result_row$'
+			fileappend "'resultfile$'" 'result_row$'
 			
 		endfor
 	else
