@@ -30,9 +30,9 @@ number_files = Get number of strings
 # Open a file for the results
 resultfile$ = "'directory$'"+"_flowlog.txt"
 
-header_row$ = "filename" + tab$ + "point" + tab$ + "vwlpct" + tab$ + "nas_power" + tab$ + "acoustic_power" + tab$ + "percnasalance" + tab$ + "measurement_time"
+header_row$ = "filename" + tab$ + "segment" + tab$ + "point" + tab$ + "vwlpct" + tab$ + "nas_power" + tab$ + "acoustic_power" + tab$ + "percnasalance" + tab$ + "measurement_time"
 pheader_row$ = "'header_row$'" + newline$
-#fileappend "'resultfile$'" 'pheader_row$'
+fileappend "'resultfile$'" 'pheader_row$'
 
 for ifile to number_files
 	select Strings list
@@ -43,17 +43,27 @@ for ifile to number_files
 	if fileReadable (gridfile$)
 		# Open the Textgrid
 		Read from file... 'gridfile$'
-		
+		number_intervals = Get number of intervals... 'nastier'
+
 		###
 		# Get Grid Information
 		###
+
+		for k from 1 to number_intervals
+			select TextGrid 'soundname$'
+			int_label$ = Get label of interval... 'nastier' 'k'
 		
-		select TextGrid 'soundname$'
-		intstart = Get starting point... 1 2
-		intend = Get end point... 1 2
-		intdur = intend - intstart
-		intmid = intstart + (intdur / 2)
-		displayoff = 0.1 * intdur
+			#checks if interval has a label
+			if int_label$ <> ""
+
+				# Calc start, end, and duration of interval
+				intstart = Get starting point... 'nastier' 'k'
+				intend = Get end point... 'nastier' 'k'
+				intdur = intend - intstart
+				intmid = intstart + (intdur / 2)
+				intlab$ = int_label$
+
+		displayoff = intdur * 1.5
 		displaystart = intstart - displayoff
 		displayend = intend + displayoff
 		
@@ -209,7 +219,7 @@ for ifile to number_files
 		Draw: displaystart,displayend, 0, 0, "yes", "Curve"
 		Select outer viewport: 0, 9.5, 0, 9
 		# Now save the file
-		Save as 300-dpi PNG file: "'directory$'_graphs/'soundname$'.png"
+		Save as 300-dpi PNG file: "'directory$'_graphs/'soundname$'_'intlab$'.png"
 		
 		# Clean up a bit
 		selectObject: "Sound nasal_flow"
@@ -244,9 +254,11 @@ for ifile to number_files
 			percnas = Get value at time: 1, 'timepoint', "Nearest"
 			vwlpct = ((timepoint-intstart)/intdur)*100
 			
-			result_row$ = "'soundname$'" + tab$ + "'point'" + tab$ + "'vwlpct:2'" + tab$ + "'naspasc:10'" + tab$ + "'orpasc:10'" + tab$ + "'percnas:5'" + tab$ + "'timepoint:4'" + newline$
+			result_row$ = "'soundname$'" + tab$ + "'intlab$'" + tab$ + "'point'" + tab$ + "'vwlpct:2'" + tab$ + "'naspasc:10'" + tab$ + "'orpasc:10'" + tab$ + "'percnas:5'" + tab$ + "'timepoint:4'" + newline$
 			fileappend "'resultfile$'" 'result_row$'
 			
+		endfor
+			endif
 		endfor
 	else
 		selectObject: "Sound 'soundname$'"
