@@ -33,7 +33,7 @@ for j from 1 to number_files
 		numint = Get number of intervals... 'tier'
 		# Start the loop
 		for i from 1 to numint
-			label = ""
+			label$ = ""
 			selectObject: "TextGrid 'sn$'"
 			label$ = Get label of interval: 'tier', 'i'
 			if label$ <> ""
